@@ -45,7 +45,6 @@ class _ExpensesState extends State<Expenses> {
           Container(
             height: MediaQuery.of(context).size.height * 0.25,
             decoration: BoxDecoration(
-              // Image background
               image: DecorationImage(
                 image: AssetImage('bg.png'), // Replace with your image path
                 fit: BoxFit.cover, // Makes the image cover the entire container
@@ -59,7 +58,9 @@ class _ExpensesState extends State<Expenses> {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
                   ),
                   Text(
                     'Түрийвч',

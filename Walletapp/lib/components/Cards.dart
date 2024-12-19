@@ -53,9 +53,9 @@ class _CardsTabState extends State<CardsTab> {
               children: [
                 // Smaller Card (behind)
                 Positioned(
-                  top: 20,
-                  left: 10,
-                  right: 0,
+                  top: -10,
+                  left: 20,
+                  right: 20,
                   child: Container(
                     height: 160,
                     decoration: BoxDecoration(

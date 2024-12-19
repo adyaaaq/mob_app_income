@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:walletapp/components/PaymentSelection.dart';
+import 'package:walletapp/components/TransactionDetails.dart';
 
 class Bill3 extends StatelessWidget {
   const Bill3({Key? key}) : super(key: key);
@@ -32,7 +33,7 @@ class Bill3 extends StatelessWidget {
                     },
                   ),
                   const Text(
-                    'Bill Details',
+                    'Bill Details3',
                     style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                   Container(
@@ -61,7 +62,7 @@ class Bill3 extends StatelessWidget {
               left: 30.0,
               right: 30.0,
               top: 32.0,
-              bottom: 16.0,
+              bottom: 16,
             ),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -89,10 +90,22 @@ class Bill3 extends StatelessWidget {
                         child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        Text(
+                          "Амжилттай төлөгдлөө",
+                          style: TextStyle(
+                              color: Color(0xFF438883),
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          "Youtube Premium",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
                         Container(
                           padding: const EdgeInsets.all(12),
-                          height: 80,
-                          width: 80,
+                          height: 56,
+                          width: 56,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(45),
                             color: Color(0xFFFAFAFA),
@@ -101,86 +114,14 @@ class Bill3 extends StatelessWidget {
                             width: 24,
                             height: 24,
                             child: Image.asset(
-                              'assets/netflix.png',
+                              'accepted.png',
                               fit: BoxFit.contain,
                             ),
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 32),
-                          child: Text(
-                            "You will pay Youtube Premium for one month with BCA OneKlik",
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        // Transaction Label
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Үнэ',
-                              style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              '\$ 11.99',
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Үнэ',
-                              style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              '\$ 11.99',
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 20, bottom: 20),
-                          height: 1, // The width of the line
-                          width: double
-                              .infinity, // Height of the line (e.g., match parent)
-                          color: Color(0xFFDDDDDD), // Color of the line
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Нийт',
-                              style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              '\$ 13.98',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
+                        TransactionDetails()
                       ],
                     )),
-                    const SizedBox(height: 24),
                   ],
                 ),
                 // Row with Image and Text
@@ -221,7 +162,7 @@ class Bill3 extends StatelessWidget {
                         elevation: 0, // No shadow
                       ),
                       child: const Text(
-                        'Баталгаажуулах',
+                        'Share Receipt',
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors

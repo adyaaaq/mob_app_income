@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:walletapp/components/PaymentSelection.dart';
+import 'package:walletapp/screens/Billing/Bill3.dart';
 
 class Bill2 extends StatelessWidget {
   const Bill2({Key? key}) : super(key: key);
@@ -209,7 +210,12 @@ class Bill2 extends StatelessWidget {
                       ],
                     ),
                     child: ElevatedButton(
-                      onPressed: () => print("clicked"),
+                      onPressed: () => {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Bill3()),
+                        )
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor:
                             Colors.transparent, // Transparent background

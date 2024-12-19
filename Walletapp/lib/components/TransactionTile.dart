@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:walletapp/screens/Billing/Bill1.dart';
 
 class TransactionTile extends StatelessWidget {
   final String imagePath; // Path to the image for the logo
@@ -65,7 +66,8 @@ class TransactionTile extends StatelessWidget {
           else if (type == 2)
             ElevatedButton(
               onPressed: () {
-                // Add button action here
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => Bill1()));
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.teal,

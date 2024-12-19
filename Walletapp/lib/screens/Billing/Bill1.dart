@@ -42,7 +42,9 @@ class _Bill1 extends State<Bill1> {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
                   ),
                   const Text(
                     'Bill Details',

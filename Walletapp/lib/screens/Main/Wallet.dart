@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:walletapp/components/Tabs.dart';
 import 'package:walletapp/components/TransactionTile.dart';
+import 'package:walletapp/screens/Expenses.dart';
 import 'package:walletapp/screens/Main/HomePage.dart';
 
 class Wallet extends StatelessWidget {
@@ -104,8 +105,21 @@ class Wallet extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            ActionButton(icon: Icons.add, label: 'Нэмэх'),
-                            ActionButton(icon: Icons.grid_view, label: 'Төлөх'),
+                            ActionButton(
+                              icon: Icons.add,
+                              label: 'Нэмэх',
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Expenses()),
+                                );
+                              },
+                            ),
+                            ActionButton(
+                              icon: Icons.grid_view,
+                              label: 'Төлөх',
+                            ),
                             ActionButton(icon: Icons.send, label: 'Илгээх'),
                           ],
                         ),
@@ -142,26 +156,37 @@ class Wallet extends StatelessWidget {
 class ActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
+  final VoidCallback? onPressed; // Optional callback for custom action
 
-  const ActionButton({required this.icon, required this.label, super.key});
+  const ActionButton({
+    required this.icon,
+    required this.label,
+    this.onPressed, // Allow null for default behavior
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          width: 60,
-          height: 60,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(
-                color: Colors.teal, width: 1), // Border with teal color
+    return GestureDetector(
+      onTap: onPressed ?? () => print('ActionButton tapped'), // Default action
+      child: Column(
+        children: [
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.teal,
+                width: 1, // Border with teal color
+              ),
+            ),
+            child: Icon(icon, color: Colors.teal, size: 28),
           ),
-          child: Icon(icon, color: Colors.teal, size: 28),
-        ),
-        const SizedBox(height: 8),
-        Text(label, style: const TextStyle(fontSize: 14)),
-      ],
+          const SizedBox(height: 8),
+          Text(label, style: const TextStyle(fontSize: 14)),
+        ],
+      ),
     );
   }
 }

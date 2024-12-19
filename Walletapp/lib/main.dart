@@ -19,10 +19,10 @@ class MyApp extends StatelessWidget {
       title: 'Income and Expenses',
       initialRoute: '/',
       routes: {
-        '/': (context) => const Bill1(),
-        // '/OnBoarding': (context) => OnBoarding(),
+        '/': (context) => const OnBoarding(),
+        '/OnBoarding': (context) => OnBoarding(),
         // '/OnBoarding': (context) => HomePage(),
-        '/OnBoarding': (context) => Bill3(),
+        // '/OnBoarding': (context) => Bill3(),
       },
       theme: ThemeData(
         primarySwatch: Colors.blue,
