@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       title: 'Income and Expenses',
       initialRoute: '/',
       routes: {
-        '/': (context) => const splash(),
+        '/': (context) => const OnBoarding(),
         '/OnBoarding': (context) => OnBoarding(),
         // '/OnBoarding': (context) => HomePage(),
         // '/OnBoarding': (context) => Bill3(),

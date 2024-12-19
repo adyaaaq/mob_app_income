@@ -123,8 +123,20 @@ class Api {
         }),
       );
 
+      print("tryin to new transact");
       if (response.statusCode == 201) {
-        return {'success': true, 'message': 'Transaction created successfully'};
+        final userId = UserSession().userData?['id'];
+
+        if (userId != null) {
+          final transactionsResponse = await fetchTransactions(userId);
+
+          if (transactionsResponse['success']) {
+            // Update transactions in UserSession
+            UserSession().setTransactions(transactionsResponse['data']);
+          }
+        }
+
+        return {'success': true, 'message': 'Transaction updated successfully'};
       } else {
         return {'success': false, 'message': 'Error: ${response.statusCode}'};
       }

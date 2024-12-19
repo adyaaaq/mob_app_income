@@ -137,6 +137,42 @@ app.put('/transactions/:id', (req, res) => {
     });
 });
 
+app.post('/transactions', (req, res) => {
+    const { userId, name, amount, date, isdone, imgUrl } = req.body;
+    console.log('CREATE NEW TRANSACT');
+    if (
+        !userId ||
+        !name ||
+        !amount ||
+        !date ||
+        isdone === undefined ||
+        !imgUrl
+    ) {
+        return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    const query =
+        'INSERT INTO transactions (userId, name, amount, date, isdone, imgUrl) VALUES (?, ?, ?, ?, ?, ?)';
+
+    db.execute(
+        query,
+        [userId, name, amount, date, isdone, imgUrl],
+        (err, result) => {
+            if (err) {
+                console.error('Error creating transaction:', err);
+                return res
+                    .status(500)
+                    .json({ message: 'Error creating transaction' });
+            }
+
+            res.status(201).json({
+                message: 'Transaction created successfully',
+                transactionId: result.insertId,
+            });
+        }
+    );
+});
+
 // Start the server
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
