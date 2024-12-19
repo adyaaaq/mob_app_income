@@ -1,9 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:walletapp/components/PaymentSelection.dart';
 import 'package:walletapp/screens/Billing/Bill3.dart';
+import 'package:walletapp/service/api.dart';
 
 class Bill2 extends StatelessWidget {
-  const Bill2({Key? key}) : super(key: key);
+  final String id;
+  final String title;
+  final String date;
+  final String amount;
+  final String imagePath;
+  final String billtype;
+
+  const Bill2({
+    required this.id,
+    required this.title,
+    required this.date,
+    required this.amount,
+    required this.imagePath,
+    required this.billtype,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +118,7 @@ class Bill2 extends StatelessWidget {
                             width: 24,
                             height: 24,
                             child: Image.asset(
-                              'assets/netflix.png',
+                              imagePath,
                               fit: BoxFit.contain,
                             ),
                           ),
@@ -129,7 +145,7 @@ class Bill2 extends StatelessWidget {
                                   fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              '\$ 11.99',
+                              '\$ ${amount}',
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             ),
@@ -140,14 +156,14 @@ class Bill2 extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Үнэ',
+                              'Хураамж',
                               style: TextStyle(
                                   color: Colors.grey,
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              '\$ 11.99',
+                              '\$ 0',
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             ),
@@ -171,7 +187,7 @@ class Bill2 extends StatelessWidget {
                                   fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              '\$ 13.98',
+                              '\$ ${amount}',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -210,11 +226,35 @@ class Bill2 extends StatelessWidget {
                       ],
                     ),
                     child: ElevatedButton(
-                      onPressed: () => {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Bill3()),
-                        )
+                      onPressed: () async {
+                        // Call the updateTransaction function
+                        final response =
+                            await Api.updateTransaction(int.parse(id));
+
+                        if (response['success']) {
+                          // Navigate to Bill3 if the update was successful
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Bill3(
+                                id: id,
+                                billtype: billtype,
+                                amount: amount,
+                                title: title,
+                                date: date,
+                                imagePath: imagePath,
+                              ),
+                            ),
+                          );
+                        } else {
+                          // Show an error message if the update failed
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(response['message']),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor:

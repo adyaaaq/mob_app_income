@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:walletapp/screens/Login/Signup.dart';
 import 'package:walletapp/Home.dart';
+import 'package:walletapp/service/api.dart'; // Import the Api class
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -11,16 +12,54 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
+
+  // Function to handle login
+  void _handleLogin() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    final response = await Api.login(email, password);
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (response['success'] == true) {
+      print('User Data: ${response['user']}');
+      print('Transactions: ${response['transactions']}');
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Home()),
+      );
+    } else {
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Нууц үг эсвэл и-мэйл буруу байна.')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: Container(
-          width: 420, // Set the desired width
-          height: 896, // Set the desired height
+          width: 420,
+          height: 896,
           decoration: BoxDecoration(
-            color: Colors.white, // Background color
-            borderRadius: BorderRadius.circular(16), // Rounded corners
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
           ),
           child: Stack(
             children: [
@@ -57,6 +96,8 @@ class _LoginState extends State<Login> {
                   height: 147,
                 ),
               ),
+
+              // First Text
               Positioned(
                 top: 127,
                 left: 100,
@@ -84,111 +125,79 @@ class _LoginState extends State<Login> {
                 ),
               ),
 
-              // Name Input Box
+              // Email Input
               Positioned(
-                top: 456.79,
+                top: 400,
                 left: 30,
                 right: 30,
-                child: SizedBox(
-                  width: 328.51,
-                  height: 53.96,
-                  child: TextField(
-                    decoration: InputDecoration(
-                      labelText: 'Имэйл хаягаа оруулна уу? ',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        controller: _emailController,
+                        decoration: InputDecoration(
+                          labelText: 'Имэйл хаягаа оруулна уу?',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          filled: true,
+                          fillColor: Colors.grey[100],
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Имэйл хаягаа оруулна уу';
+                          }
+                          return null;
+                        },
                       ),
-                      filled: true,
-                      fillColor: Colors.grey[100], // Background color for input
-                    ),
-                  ),
-                ),
-              ),
+                      const SizedBox(height: 16),
 
-              // Password Input Box
-              Positioned(
-                top: 533.79,
-                left: 30,
-                right: 30,
-                child: TextField(
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    labelText: 'Нууц үгээ оруулаарай',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                  ),
-                ),
-              ),
-              // Log In Button (Navigate to Wallet page)
-              Positioned(
-                top: 630,
-                left: 30,
-                child: SizedBox(
-                  width: 342,
-                  height: 74,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Navigate to Wallet page
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Home()),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF69AEA9), // Button color
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(40), // Rounded corners
+                      // Password Input
+                      TextFormField(
+                        controller: _passwordController,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          labelText: 'Нууц үгээ оруулаарай',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          filled: true,
+                          fillColor: Colors.grey[100],
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Нууц үгээ оруулаарай';
+                          }
+                          return null;
+                        },
                       ),
-                    ),
-                    child: const Text(
-                      'Нэвтрэх',
-                      style: TextStyle(
-                        fontSize: 24,
-                        color: Colors.white, // Button text color
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+                      const SizedBox(height: 32),
 
-              // "Are you a new customer?" and "Register" Texts
-              Positioned(
-                bottom: 20, // Position near the bottom
-                left: 80, // Adjust to align properly
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Хэрэглэгчийн эрхтэй юу?.',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black54, // Text color
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        // Navigate to the Register page
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const Register()), // Navigate to Register
-                        );
-                      },
-                      child: const Text(
-                        'Бүртгүүлэх',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.blue, // Text color for Register
-                          fontWeight: FontWeight.bold,
+                      // Login Button
+                      SizedBox(
+                        width: double.infinity,
+                        height: 54,
+                        child: ElevatedButton(
+                          onPressed: _isLoading ? null : _handleLogin,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF69AEA9),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(40),
+                            ),
+                          ),
+                          child: _isLoading
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white)
+                              : const Text(
+                                  'Нэвтрэх',
+                                  style: TextStyle(
+                                      fontSize: 24, color: Colors.white),
+                                ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ],

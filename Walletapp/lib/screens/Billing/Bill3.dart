@@ -3,7 +3,22 @@ import 'package:walletapp/components/PaymentSelection.dart';
 import 'package:walletapp/components/TransactionDetails.dart';
 
 class Bill3 extends StatelessWidget {
-  const Bill3({Key? key}) : super(key: key);
+  final String id;
+  final String title;
+  final String date;
+  final String amount;
+  final String imagePath;
+  final String billtype;
+
+  const Bill3({
+    required this.id,
+    required this.title,
+    required this.date,
+    required this.amount,
+    required this.imagePath,
+    required this.billtype,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +113,7 @@ class Bill3 extends StatelessWidget {
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          "Youtube Premium",
+                          title,
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
@@ -119,7 +134,12 @@ class Bill3 extends StatelessWidget {
                             ),
                           ),
                         ),
-                        TransactionDetails()
+                        TransactionDetails(
+                          billtype: billtype,
+                          amount: amount,
+                          title: title,
+                          date: date,
+                        )
                       ],
                     )),
                   ],

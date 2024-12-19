@@ -1,11 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:walletapp/components/TransactionTile.dart';
+import 'package:walletapp/service/user_session.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final transactions = UserSession().transactions ?? [];
+
+    // Filter transactions where 'isdone' == 1
+    final filteredTransactions = transactions
+        .where((transaction) =>
+            int.tryParse(transaction['isdone'].toString()) == 1)
+        .toList();
+
+    String _formatAmount(String amount) {
+      // Attempt to parse the string to a double
+      final parsedAmount = double.tryParse(amount) ?? 0.0;
+
+      return parsedAmount >= 0
+          ? '+ \$${parsedAmount.toStringAsFixed(2)}'
+          : '- \$${parsedAmount.abs().toStringAsFixed(2)}';
+    }
+
+    // Helper method to format the date string (you can adjust this based on your date format)
+    String _formatDate(String date) {
+      DateTime parsedDate = DateTime.parse(date);
+      return '${parsedDate.year}-${parsedDate.month}-${parsedDate.day}';
+    }
+
+    final userName =
+        (UserSession().isLoggedIn && UserSession().userData != null)
+            ? UserSession().userData!['name'] ?? 'Guest'
+            : 'Guest';
+
     return Scaffold(
       backgroundColor: Colors.grey[100],
       body: SingleChildScrollView(
@@ -37,7 +66,7 @@ class HomePage extends StatelessWidget {
                             style: TextStyle(color: Colors.white),
                           ),
                           Text(
-                            'Н.Даваа',
+                            userName,
                             style: TextStyle(color: Colors.white, fontSize: 20),
                           ),
                         ],
@@ -152,38 +181,27 @@ class HomePage extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 10),
-                    TransactionTile(
-                      imagePath: 'assets/Frame9.png',
-                      title: 'Upwork',
-                      date: 'Өнөөдөр',
-                      amount: '+ \$850.00',
-                      amountColor: Colors.green,
-                      type: 1,
-                    ),
-                    TransactionTile(
-                      imagePath: 'assets/Group11.png',
-                      title: 'Шилжүүлэг',
-                      date: 'Өчигдөр',
-                      amount: '- \$85.00',
-                      amountColor: Colors.red,
-                      type: 1,
-                    ),
-                    TransactionTile(
-                      imagePath: 'assets/paypal.png',
-                      title: 'Paypal',
-                      date: 'Jan 30, 2022',
-                      amount: '+ \$1,406.00',
-                      amountColor: Colors.green,
-                      type: 1,
-                    ),
-                    TransactionTile(
-                      imagePath: 'assets/youtube.png',
-                      title: 'Youtube',
-                      date: 'Jan 16, 2022',
-                      amount: '- \$11.99',
-                      amountColor: Colors.red,
-                      type: 1,
-                    ),
+                    ...filteredTransactions.map((transaction) =>
+                        TransactionTile(
+                          id: transaction['id'].toString(),
+                          imagePath: transaction['imgUrl'].toString(),
+                          title: transaction['name'].toString(),
+                          date: _formatDate(transaction['date'].toString()),
+                          amount:
+                              _formatAmount(transaction['amount'].toString()),
+                          amountColor: double.tryParse(
+                                          transaction['amount'].toString()) !=
+                                      null &&
+                                  double.tryParse(
+                                          transaction['amount'].toString())! >=
+                                      0
+                              ? Colors.green
+                              : Colors.red,
+                          type:
+                              int.tryParse(transaction['isdone'].toString()) ??
+                                  0,
+                        )),
+
                     SizedBox(height: 20),
 
                     // Send Again Section

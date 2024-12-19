@@ -1,7 +1,18 @@
 import 'package:flutter/material.dart';
 
 class TransactionDetails extends StatefulWidget {
-  const TransactionDetails({super.key});
+  final String title;
+  final String date;
+  final String amount;
+  final String billtype;
+
+  const TransactionDetails({
+    required this.title,
+    required this.date,
+    required this.amount,
+    required this.billtype,
+    super.key,
+  });
 
   @override
   State<TransactionDetails> createState() => _TransactionDetailsState();
@@ -60,23 +71,23 @@ class _TransactionDetailsState extends State<TransactionDetails> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            _buildDetailRow('Үнэ', '\$ 11.99'),
+            _buildDetailRow('Төлбөрийн хэрэгсэл', widget.billtype),
             const SizedBox(height: 6),
-            _buildDetailRow('Үнэ', '\$ 11.99'),
+            _buildDetailRow('Төлөв', '\$ Хийгдсэн'),
             const SizedBox(height: 6),
-            _buildDetailRow('Үнэ', '\$ 11.99'),
+            _buildDetailRow('Цаг', '\$ 08:15 AM'),
             const SizedBox(height: 6),
-            _buildDetailRow('Үнэ', '\$ 11.99'),
+            _buildDetailRow('Огноо', '\$ Feb 28, 2022'),
             const SizedBox(height: 6),
-            _buildDetailRow('Үнэ', '\$ 11.99'),
+            _buildDetailRow('Гүйлгээний дугаар', '2092913832472..'),
             const SizedBox(height: 10),
             const Divider(color: Color(0xFFDDDDDD)),
-            _buildDetailRow('Нийт', '\$ 13.98', isTotal: true),
+            _buildDetailRow('Үнэ', '\$ ${widget.amount}', isTotal: true),
             const SizedBox(height: 10),
-            _buildDetailRow('Үнэ', '\$ 11.99'),
+            _buildDetailRow('Хураамж', '\$ 0'),
             const SizedBox(height: 10),
             const Divider(color: Color(0xFFDDDDDD)),
-            _buildDetailRow('Нийт', '\$ 13.98', isTotal: true),
+            _buildDetailRow('Нийт', '\$ ${widget.amount}', isTotal: true),
             const SizedBox(height: 10),
             Center(
               child: Image.asset(

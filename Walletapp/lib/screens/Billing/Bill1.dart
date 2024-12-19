@@ -3,7 +3,20 @@ import 'package:walletapp/components/PaymentSelection.dart';
 import 'package:walletapp/screens/Billing/Bill2.dart';
 
 class Bill1 extends StatefulWidget {
-  const Bill1({Key? key}) : super(key: key);
+  final String id;
+  final String title;
+  final String date;
+  final String amount;
+  final String imagePath;
+
+  const Bill1({
+    required this.id,
+    required this.title,
+    required this.date,
+    required this.amount,
+    required this.imagePath,
+    super.key,
+  });
 
   @override
   State<Bill1> createState() => _Bill1();
@@ -114,7 +127,7 @@ class _Bill1 extends State<Bill1> {
                             width: 24,
                             height: 24,
                             child: Image.asset(
-                              'assets/netflix.png',
+                              widget.imagePath,
                               fit: BoxFit.contain,
                             ),
                           ),
@@ -122,14 +135,14 @@ class _Bill1 extends State<Bill1> {
                         const SizedBox(width: 12),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Text(
-                              "Netflix",
+                              widget.title,
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              "Subscription",
+                              widget.date,
                               style:
                                   TextStyle(fontSize: 14, color: Colors.grey),
                             ),
@@ -150,9 +163,11 @@ class _Bill1 extends State<Bill1> {
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          '\$ 11.99',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
+                          '\$ ${widget.amount}',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ],
                     ),
@@ -161,16 +176,18 @@ class _Bill1 extends State<Bill1> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Үнэ',
+                          'Хураамж',
                           style: TextStyle(
                               color: Colors.grey,
                               fontSize: 16,
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          '\$ 11.99',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
+                          '\$ 0',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ],
                     ),
@@ -192,7 +209,7 @@ class _Bill1 extends State<Bill1> {
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          '\$ 13.98',
+                          '\$ ${widget.amount}',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -252,7 +269,15 @@ class _Bill1 extends State<Bill1> {
                       onPressed: () => {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => Bill2()),
+                          MaterialPageRoute(
+                              builder: (context) => Bill2(
+                                    id: widget.id,
+                                    billtype: _selectedPayment,
+                                    amount: widget.amount,
+                                    title: widget.amount,
+                                    date: widget.date,
+                                    imagePath: widget.imagePath,
+                                  )),
                         )
                       },
                       style: ElevatedButton.styleFrom(

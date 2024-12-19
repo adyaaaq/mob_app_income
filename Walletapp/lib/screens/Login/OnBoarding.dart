@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:walletapp/Home.dart';
+import 'package:walletapp/screens/Login/Login.dart';
 import 'dart:math'; // For degree-to-radian conversion
 import 'Signup.dart'; // Import the Register page
 
@@ -89,7 +90,7 @@ class _OnBoardingState extends State<OnBoarding> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => Home(),
+                            builder: (context) => Login(),
                           ),
                         );
                       },

@@ -3,6 +3,7 @@ import 'package:walletapp/components/Tabs.dart';
 import 'package:walletapp/components/TransactionTile.dart';
 import 'package:walletapp/screens/Expenses.dart';
 import 'package:walletapp/screens/Main/HomePage.dart';
+import 'package:walletapp/service/user_session.dart';
 
 class Wallet extends StatelessWidget {
   const Wallet({super.key});
@@ -191,49 +192,51 @@ class ActionButton extends StatelessWidget {
   }
 }
 
-// Example Content for 'Гүйлгээнүүд' Tab
 class TransactionsList extends StatelessWidget {
   const TransactionsList({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final transactions = UserSession().transactions ?? [];
+
+    // Filter transactions where 'isdone' == 1
+    final filteredTransactions = transactions
+        .where((transaction) =>
+            int.tryParse(transaction['isdone'].toString()) == 1)
+        .toList();
+
     return ListView(
       padding: const EdgeInsets.all(16.0),
-      children: const [
-        TransactionTile(
-          imagePath: 'assets/Frame9.png',
-          title: 'Upwork',
-          date: 'Өнөөдөр',
-          amount: '+ \$850.00',
-          amountColor: Colors.green,
-          type: 1,
-        ),
-        TransactionTile(
-          imagePath: 'assets/Group11.png',
-          title: 'Шилжүүлэг',
-          date: 'Өчигдөр',
-          amount: '- \$85.00',
-          amountColor: Colors.red,
-          type: 1,
-        ),
-        TransactionTile(
-          imagePath: 'assets/paypal.png',
-          title: 'Paypal',
-          date: 'Jan 30, 2022',
-          amount: '+ \$1,406.00',
-          amountColor: Colors.green,
-          type: 1,
-        ),
-        TransactionTile(
-          imagePath: 'assets/youtube.png',
-          title: 'Youtube',
-          date: 'Jan 16, 2022',
-          amount: '- \$11.99',
-          amountColor: Colors.red,
-          type: 1,
-        ),
+      children: [
+        ...filteredTransactions.map((transaction) => TransactionTile(
+              id: transaction['id'].toString(),
+              imagePath: transaction['imgUrl'].toString(),
+              title: transaction['name'].toString(),
+              date: _formatDate(transaction['date'].toString()),
+              amount: _formatAmount(transaction['amount'].toString()),
+              amountColor: double.tryParse(transaction['amount'].toString()) !=
+                          null &&
+                      double.tryParse(transaction['amount'].toString())! >= 0
+                  ? Colors.green
+                  : Colors.red,
+              type: int.tryParse(transaction['isdone'].toString()) ?? 0,
+            )),
       ],
     );
+  }
+
+  // Helper method to format the date string
+  String _formatDate(String date) {
+    DateTime parsedDate = DateTime.tryParse(date) ?? DateTime.now();
+    return '${parsedDate.year}-${parsedDate.month.toString().padLeft(2, '0')}-${parsedDate.day.toString().padLeft(2, '0')}';
+  }
+
+  // Helper method to format the amount with a plus or minus sign
+  String _formatAmount(String amount) {
+    final parsedAmount = double.tryParse(amount) ?? 0.0;
+    return parsedAmount >= 0
+        ? '+ \$${parsedAmount.toStringAsFixed(2)}'
+        : '- \$${parsedAmount.abs().toStringAsFixed(2)}';
   }
 }
 
@@ -243,42 +246,45 @@ class PendingTransactions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final transactions = UserSession().transactions ?? [];
+
+    // Filter transactions where 'isdone' == 1
+    final filteredTransactions = transactions
+        .where((transaction) =>
+            int.tryParse(transaction['isdone'].toString()) == 0)
+        .toList();
+
     return ListView(
       padding: const EdgeInsets.all(16.0),
-      children: const [
-        TransactionTile(
-          imagePath: 'assets/Frame9.png',
-          title: 'Upwork',
-          date: 'Өнөөдөр',
-          amount: '+ \$850.00',
-          amountColor: Colors.green,
-          type: 2,
-        ),
-        TransactionTile(
-          imagePath: 'assets/Group11.png',
-          title: 'Шилжүүлэг',
-          date: 'Өчигдөр',
-          amount: '- \$85.00',
-          amountColor: Colors.red,
-          type: 2,
-        ),
-        TransactionTile(
-          imagePath: 'assets/paypal.png',
-          title: 'Paypal',
-          date: 'Jan 30, 2022',
-          amount: '+ \$1,406.00',
-          amountColor: Colors.green,
-          type: 2,
-        ),
-        TransactionTile(
-          imagePath: 'assets/youtube.png',
-          title: 'Youtube',
-          date: 'Jan 16, 2022',
-          amount: '- \$11.99',
-          amountColor: Colors.red,
-          type: 2,
-        ),
+      children: [
+        ...filteredTransactions.map((transaction) => TransactionTile(
+              id: transaction['id'].toString(),
+              imagePath: transaction['imgUrl'].toString(),
+              title: transaction['name'].toString(),
+              date: _formatDate(transaction['date'].toString()),
+              amount: _formatAmount(transaction['amount'].toString()),
+              amountColor: double.tryParse(transaction['amount'].toString()) !=
+                          null &&
+                      double.tryParse(transaction['amount'].toString())! >= 0
+                  ? Colors.green
+                  : Colors.red,
+              type: int.tryParse(transaction['isdone'].toString()) ?? 0,
+            )),
       ],
     );
+  }
+
+  // Helper method to format the date string
+  String _formatDate(String date) {
+    DateTime parsedDate = DateTime.tryParse(date) ?? DateTime.now();
+    return '${parsedDate.year}-${parsedDate.month.toString().padLeft(2, '0')}-${parsedDate.day.toString().padLeft(2, '0')}';
+  }
+
+  // Helper method to format the amount with a plus or minus sign
+  String _formatAmount(String amount) {
+    final parsedAmount = double.tryParse(amount) ?? 0.0;
+    return parsedAmount >= 0
+        ? '+ \$${parsedAmount.toStringAsFixed(2)}'
+        : '- \$${parsedAmount.abs().toStringAsFixed(2)}';
   }
 }

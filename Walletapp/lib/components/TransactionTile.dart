@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:walletapp/screens/Billing/Bill1.dart';
 
 class TransactionTile extends StatelessWidget {
+  final String id; // Path to the image for the logo
   final String imagePath; // Path to the image for the logo
   final String title;
   final String date;
@@ -10,6 +11,7 @@ class TransactionTile extends StatelessWidget {
   final int type; // Type parameter to determine what to display
 
   const TransactionTile({
+    required this.id,
     required this.imagePath,
     required this.title,
     required this.date,
@@ -63,11 +65,19 @@ class TransactionTile extends StatelessWidget {
                 color: amountColor,
               ),
             )
-          else if (type == 2)
+          else
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => Bill1()));
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Bill1(
+                          id: id,
+                          title: title,
+                          date: date,
+                          amount: amount,
+                          imagePath: imagePath),
+                    ));
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.teal,

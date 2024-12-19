@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:walletapp/service/api.dart'; // Import the API service
+import 'package:walletapp/service/user_session.dart'; // Import UserSession for user data
 
 class Expenses extends StatefulWidget {
   const Expenses({super.key});
@@ -8,9 +10,20 @@ class Expenses extends StatefulWidget {
 }
 
 class _ExpensesState extends State<Expenses> {
-  // Selected transaction name
-  String _selectedTransaction = 'Netflix';
-  final List<String> _transactions = ['Netflix', 'Spotify', 'Amazon', 'Hulu'];
+  final List<Map<String, String>> _transactions = [
+    {'name': 'Netflix', 'imagePath': 'assets/netflix.png'},
+    {'name': 'Spotify', 'imagePath': 'assets/spotify.png'},
+    {'name': 'youtube', 'imagePath': 'assets/youtube.png'},
+    {'name': 'paypal', 'imagePath': 'assets/paypal.png'},
+  ];
+
+  late Map<String, String> _selectedTransaction;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedTransaction = _transactions[0];
+  }
 
   // Amount Controller
   final TextEditingController _amountController =
@@ -35,6 +48,31 @@ class _ExpensesState extends State<Expenses> {
     }
   }
 
+  // Function to create a new transaction
+  Future<void> _createTransaction() async {
+    final amount = _amountController.text.replaceAll('\$', '').trim();
+
+    final response = await Api.createTransaction(
+      name: _selectedTransaction['name']!,
+      amount: amount,
+      date: _selectedDate.toLocal().toString().split(' ')[0],
+      imgUrl: _selectedTransaction['imagePath']!,
+    );
+
+    if (response['success']) {
+      _showSnackBar('Transaction created successfully');
+    } else {
+      _showSnackBar('Error: ${response['message']}');
+    }
+  }
+
+  // Function to show a SnackBar for feedback
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,12 +80,13 @@ class _ExpensesState extends State<Expenses> {
       body: Stack(
         alignment: Alignment.topCenter,
         children: [
+          // Background Container
           Container(
             height: MediaQuery.of(context).size.height * 0.25,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('bg.png'), // Replace with your image path
-                fit: BoxFit.cover, // Makes the image cover the entire container
+                image: AssetImage('assets/bg.png'),
+                fit: BoxFit.cover,
               ),
             ),
             child: Padding(
@@ -58,182 +97,158 @@ class _ExpensesState extends State<Expenses> {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+                    onPressed: () => Navigator.pop(context),
                   ),
-                  Text(
+                  const Text(
                     'Түрийвч',
                     style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                   Container(
                     decoration: BoxDecoration(
-                      color: Color(0xFF408D87),
+                      color: const Color(0xFF408D87),
                       borderRadius: BorderRadius.circular(7),
                     ),
                     child: IconButton(
-                      icon: Icon(Icons.notifications_none, color: Colors.white),
+                      icon: const Icon(Icons.notifications_none,
+                          color: Colors.white),
                       onPressed: () {},
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
           ),
+
+          // Form Container
           Container(
             margin: EdgeInsets.only(
-              top: MediaQuery.of(context).size.height *
-                  0.20, // 15% of screen height for top padding
-              left: 16.0, // 16px for left padding
-              right: 16.0, // 16px for right padding
+              top: MediaQuery.of(context).size.height * 0.20,
+              left: 16.0,
+              right: 16.0,
             ),
-            padding: EdgeInsets.only(
-              left: 16.0, // 16px for left padding
-              right: 16.0, // 16px for right padding
-              top: 32.0, // 16px for bottom padding
-            ),
+            padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(30),
                 topRight: Radius.circular(30),
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black
-                      .withOpacity(0.4), // Shadow color with opacity
-                  offset: const Offset(0, 16), // Horizontal and vertical offset
-                  blurRadius: 12, // Blur radius
-                  spreadRadius: 2, // Spread radius
+                  color: Colors.black.withOpacity(0.1),
+                  offset: const Offset(0, 16),
+                  blurRadius: 12,
+                  spreadRadius: 2,
                 ),
               ],
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Transaction Name Dropdown
-                const Text(
-                  'ГҮЙЛГЭЭНИЙ НЭР',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  width: double.infinity,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(8),
-                    color: Colors.white,
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: _selectedTransaction,
-                      items: _transactions.map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Row(
-                            children: [
-                              Image.asset(
-                                'netflix.png', // Replace with actual asset path
-                                width: 24,
-                                height: 24,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(value),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _selectedTransaction = newValue!;
-                        });
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-
-                // Amount Field
-                const Text(
-                  'ҮНИЙН ДҮН',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _amountController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-
-                // Date Picker
-                const Text(
-                  'ОГНОО',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                GestureDetector(
-                  onTap: _pickDate,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 16),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Transaction Name Dropdown
+                  const Text('ГҮЙЛГЭЭНИЙ НЭР',
+                      style:
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey),
                       borderRadius: BorderRadius.circular(8),
-                      color: Colors.white,
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '${_selectedDate.toLocal()}'.split(' ')[0],
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                        const Icon(Icons.calendar_today, color: Colors.grey),
-                      ],
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<Map<String, String>>(
+                        value: _selectedTransaction,
+                        items: _transactions.map((transaction) {
+                          return DropdownMenuItem<Map<String, String>>(
+                            value: transaction, // Each value must be unique
+                            child: Row(
+                              children: [
+                                Image.asset(
+                                  transaction['imagePath']!,
+                                  width: 24,
+                                  height: 24,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(transaction['name']!),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (newValue) {
+                          setState(() {
+                            _selectedTransaction = newValue!;
+                          });
+                        },
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
-                // Payment Button
-                const Text(
-                  'ТӨЛБӨР',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                GestureDetector(
-                  onTap: () {
-                    // Add payment action here
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                          color: Colors.grey, style: BorderStyle.solid),
-                      borderRadius: BorderRadius.circular(8),
-                      color: Colors.white,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Icon(Icons.add, color: Colors.grey),
-                        SizedBox(width: 8),
-                        Text(
-                          'Төлбөр нэмэх',
-                          style: TextStyle(fontSize: 16, color: Colors.grey),
-                        ),
-                      ],
+                  // Amount Field
+                  const Text('ҮНИЙН ДҮН',
+                      style:
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _amountController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 20),
+
+                  // Date Picker
+                  const Text('ОГНОО',
+                      style:
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  GestureDetector(
+                    onTap: _pickDate,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 16),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.white,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '${_selectedDate.toLocal()}'.split(' ')[0],
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          const Icon(Icons.calendar_today, color: Colors.grey),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Payment Button
+                  ElevatedButton(
+                    onPressed: _createTransaction,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Center(
+                      child: Text('Төлбөр нэмэх',
+                          style: TextStyle(fontSize: 16, color: Colors.white)),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
